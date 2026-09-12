@@ -182,11 +182,18 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> **Windows note**: this project pins `scikit-learn==1.4.2` and `pyarrow==16.1.0`.
-> On machines with Windows **Smart App Control** enabled, brand-new/uncommon
-> compiled wheel versions can be blocked on first load ("An Application Control
-> policy has blocked this file") until Microsoft's reputation service evaluates
-> them -- these pinned, widely-used versions avoid that friction.
+> **Windows note**: on machines with Windows **Smart App Control** enabled,
+> brand-new/uncommon compiled wheel versions (e.g. a freshly released
+> scikit-learn or pyarrow) can be blocked on first load ("An Application
+> Control policy has blocked this file") until Microsoft's reputation service
+> evaluates them. If you hit this, install a slightly older, widely-used
+> version explicitly, e.g. `pip install "scikit-learn==1.4.2" "pyarrow==16.1.0"`,
+> which resolves it immediately. This project deliberately does **not** hard-pin
+> these in `requirements.txt`, since an old pin instead breaks deployment on
+> Streamlit Community Cloud (which may run a newer Python without prebuilt
+> wheels for an old pinned version). A `runtime.txt` / `.python-version` set to
+> 3.11 is included to keep cloud deployments on the same Python version this
+> app was developed and tested against.
 
 ## 9. How to Run
 

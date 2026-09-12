@@ -738,7 +738,7 @@ elif page == "Business Impact":
 
     kpis = da.compute_kpis(df)
     st.subheader("Assumptions")
-    cost_per_delay = st.number_input("Estimated cost per delayed shipment (USD) -- assumption", 1.0, 500.0, 8.0)
+    cost_per_delay = st.number_input("Estimated cost per delayed shipment (INR) -- assumption", 10.0, 2000.0, 300.0, step=10.0)
     sla_breach_hours = st.number_input("SLA breach threshold (hours) -- assumption", 1.0, 72.0, 24.0)
 
     delayed_df = df.loc[df["Delay_Flag"] == 1]
@@ -759,7 +759,7 @@ elif page == "Business Impact":
     st.markdown(f"""
     <div class="insight-card">
     <b>Estimated delay cost (ASSUMPTION-BASED)</b>: {kpis['delayed_shipments']:,} delayed shipments x
-    ${cost_per_delay:.2f} assumed cost per delayed shipment = <b>${est_cost:,.0f}</b>.
+    ₹{cost_per_delay:,.2f} assumed cost per delayed shipment = <b>₹{est_cost:,.0f}</b>.
     This is an estimate based on the assumption above, not a measured financial figure.
     </div>
     """, unsafe_allow_html=True)

@@ -250,7 +250,7 @@ every analytics page.
 - All data is synthetic; causal relationships are designed to be directionally
   realistic (e.g. high warehouse utilization -> longer processing), not calibrated
   against a specific real operator's historical data.
-- Business-impact costs (e.g. "$8 per delayed shipment") are illustrative,
+- Business-impact costs (e.g. "₹300 per delayed shipment") are illustrative,
   user-adjustable assumptions, clearly labeled as such -- not measured figures.
 - Features used for prediction are limited to what would plausibly be known/
   estimable at booking/dispatch time in a real operation.

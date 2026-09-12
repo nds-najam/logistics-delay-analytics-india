@@ -89,9 +89,35 @@ def get_clean_data():
 
 @st.cache_resource(show_spinner="Loading delay-risk model...")
 def get_model():
-    if not os.path.exists(mdl.MODEL_PATH):
-        return None
-    return mdl.load_model()
+    """Load the pre-trained model. Falls back to training a fresh model in-process
+    if the saved artifact is missing or was pickled with an incompatible
+    scikit-learn version (pickles are not guaranteed portable across sklearn
+    versions, which can differ between a local dev environment and a cloud
+    deployment's resolved dependencies)."""
+    if os.path.exists(mdl.MODEL_PATH):
+        try:
+            return mdl.load_model()
+        except Exception:
+            pass  # fall through to retrain fresh with the currently installed sklearn version
+
+    with st.spinner("No compatible saved model found -- training a fresh model now (one-time, ~1 minute)..."):
+        train_df, _, _ = get_clean_data()
+        training_output = mdl.train_and_evaluate(train_df)
+        try:
+            payload = mdl.save_best_model(training_output)
+        except Exception:
+            best_name = training_output["best_model_name"]
+            best = training_output["results"][best_name]
+            payload = {
+                "pipeline": best["pipeline"], "model_name": best_name, "metrics": best["metrics"],
+                "all_model_metrics": {k: v["metrics"] for k, v in training_output["results"].items()},
+                "roc_curves": {k: v["roc_curve"] for k, v in training_output["results"].items()},
+                "trained_at": training_output["trained_at"],
+                "training_records": training_output["training_records"],
+                "test_records": training_output["test_records"],
+                "feature_list": training_output["feature_list"],
+            }
+    return payload
 
 
 @st.cache_data(show_spinner=False)

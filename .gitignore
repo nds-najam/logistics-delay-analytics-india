@@ -2,3 +2,7 @@ venv/
 __pycache__/
 *.pyc
 .pytest_cache/
+models/srd_delay_risk_model.joblib
+sdr_requirements.pdf
+data/srd_rules.json
+.streamlit/secrets.toml

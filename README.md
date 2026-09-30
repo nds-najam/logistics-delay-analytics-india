@@ -1,4 +1,45 @@
-# DataQ -- Logistics Delay Intelligence
+# SRD Logistics -- Service Performance & Live Reporting Dashboard
+
+`app.py` is the dashboard built to SRD's consolidated requirements (LR-level service % vs
+configurable targets, route/source/destination/via/business/customer performance, journey-stage
+delay drill-down, period comparison, booking-to-main-hub tracking, live operations, and
+system-generated improvement suggestions). The earlier shipment-level demo described below is
+kept as `legacy_app.py`.
+
+```
+streamlit run app.py                 # SRD dashboard
+python src/srd_generator.py          # regenerate the synthetic LR data (data/srd_lr_data.csv)
+pytest tests/test_srd.py             # SRD tests (tests/test_pipeline.py covers the legacy demo)
+```
+
+| Requirement section | Dashboard page |
+|---|---|
+| 1 Service % & target performance, configurable target days | Service vs Target, Configuration, sidebar "Target days basis" |
+| 2 Source / destination / via / route / business performance | Network Performance |
+| 3 Delay reasons, journey-stage delays, route drill-down, IF/operational remarks | Delay Analysis |
+| 4 LR search, consignor / consignee analysis | LR & Customer |
+| 5 Weekly / 10-day / 15-day / monthly / yearly, period comparison | Period Reports |
+| 6 Booking to main hub dispatch, ageing | Booking to Main Hub |
+| 7 Live reports | Live Operations |
+| 8 Improvement suggestions | Improvement Suggestions |
+| 9 Filters, drill-down, configurable rules | Sidebar filters, Configuration |
+| (existing ML capability) | Delay Risk (ML) |
+
+Module map: `src/srd_generator.py` (LR data + route reference), `src/srd_analytics.py`
+(targets, service %, delay points, periods, hub movement, suggestions), `src/srd_model.py`
+(delay-risk model), `src/srd_live.py` (live feed + live reports). Targets live in
+`data/srd_targets.csv` and rules in `data/srd_rules.json`, both editable from the Configuration page.
+
+**Assumptions to confirm with SRD**
+- The data is synthetic; replace `data/srd_lr_data.csv` (same columns) with real LR extracts.
+- The live feed is simulated from the local snapshot. Set `SRD_API_BASE_URL` (and `SRD_API_TOKEN`)
+  to call `GET {base}/lrs`; the JSON contract in `src/srd_live.py` must be matched to SRD's real API.
+- "KT weight" is treated as total LR weight in tonnes; "via" as the intermediate hub; service %
+  as on-track LRs / total LRs, with days counted as calendar days from booking date.
+
+---
+
+# DataQ -- Logistics Delay Intelligence (legacy demo)
 
 A client-facing proof-of-concept analytics + ML application built for a logistics
 company whose core business pain point is **delayed packages**. The application
